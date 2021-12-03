@@ -1,1 +1,1 @@
-# 7011DATSCI
+# Statistical Methods in R
