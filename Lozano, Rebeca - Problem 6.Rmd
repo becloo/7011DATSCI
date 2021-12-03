@@ -1,0 +1,209 @@
+---
+title: "Problem 6"
+author: "Rebeca Lozano"
+date: "22/11/2021"
+output: pdf_document
+---
+
+1. **My simulation on randomly generated data from a normal distribution with n=1000 showed 52/1000 significant p-values. Therefore, it rejected the null hypothesis of normality 5.2% of the time (~5%).**
+
+```{r}
+num_rejected <- vector("logical", 1000L)
+for (i in 1:1000) {
+  x = rnorm(1000)
+  test = shapiro.test(x)
+  test_results = test$p.value < 0.05
+  num_rejected[i] = test_results
+}
+perc_null_rejected = (length(which(num_rejected=='TRUE'))/1000)*100
+```
+
+**2.**
+
+|Distribution|n |1-Bsw|
+|-----------:|:-|:---:|
+|uniform|10|1-0.925 = 0.075|
+|uniform|50|1-0.234 = 0.766|
+|uniform|200|1-0 = 1|
+|t (dof=3|10|1-0.812 = 0.188|
+|t (dof=3)|50|1-0.365 = 0.635|
+|t (dof=3)|200|1-0.012 = 0.988|
+
+```{r}
+num_rejected_notrejected_1 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  x_1 = runif(10)
+  test_1 = shapiro.test(x_1)
+  sw_test_results_1 = test_1$p.value > 0.050
+  num_rejected_notrejected_1[i] = sw_test_results_1
+}
+beta_1 = length(which(num_rejected_notrejected_1=='TRUE'))/1000
+power_1 = 1 - (beta_1)
+
+num_rejected_notrejected_2 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  x_2 = runif(50)
+  test_2 = shapiro.test(x_2)
+  sw_test_results_2 = test_2$p.value > 0.050
+  num_rejected_notrejected_2[i] = sw_test_results_2
+}
+beta_2 = length(which(num_rejected_notrejected_2=='TRUE'))/1000L
+power_2 = 1 - (beta_2)
+
+num_rejected_notrejected_3 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  x_3 = runif(200)
+  test_3 = shapiro.test(x_3)
+  sw_test_results_3 = test_3$p.value > 0.050
+  num_rejected_notrejected_3[i] = sw_test_results_3
+}
+beta_3 = length(which(num_rejected_notrejected_3=='TRUE'))/1000
+power_3 = 1 - (beta_3)
+
+num_rejected_notrejected_4 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  x_4 = rt(10,3)
+  test_4 = shapiro.test(x_4)
+  sw_test_results_4 = test_4$p.value > 0.050
+  num_rejected_notrejected_4[i] = sw_test_results_4
+}
+beta_4 = length(which(num_rejected_notrejected_4=='TRUE'))/1000
+power_4 = 1 - (beta_4)
+
+num_rejected_notrejected_5 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  x_5 = rt(50,3)
+  test_5 = shapiro.test(x_5)
+  sw_test_results_5 = test_5$p.value > 0.050
+  num_rejected_notrejected_5[i] = sw_test_results_5
+}
+beta_5 = length(which(num_rejected_notrejected_5=='TRUE'))/1000
+power_5 = 1 - (beta_5)
+
+num_rejected_notrejected_6 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  x_6 = rt(200,3)
+  test_6 = shapiro.test(x_6)
+  sw_test_results_6 = test_6$p.value > 0.050
+  num_rejected_notrejected_6[i] = sw_test_results_6
+}
+beta_6 = length(which(num_rejected_notrejected_6=='TRUE'))/1000
+power_6 = 1 - (beta_6)
+
+```
+
+
+3.
+
+| n1|n2|1-Bks|
+|--:|:-|:---:|
+|20|20|1-0.96 = 0.04|
+|50|50|1-0.926 = 0.074|
+|200|200|1 - 0.786 = 0.214|
+|500|500|1 - 0.351 = 0.649|
+
+```{r}
+library(twosamples)
+set.seed(2)
+num_rejected_notrejected_7 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  aa_n1 = runif(20, min = -1.75, max = 1.75)
+  aa_n2 = rnorm(20, mean=0, sd=1)
+  ks_test_7 = ks.test(aa_n1, aa_n2)
+  ks_test_results_7 = ks_test_7$p.value > 0.050
+  num_rejected_notrejected_7[i] = ks_test_results_7
+}
+beta_7 = length(which(num_rejected_notrejected_7=='TRUE'))/1000
+power_7 = 1 - (beta_7)
+num_rejected_notrejected_8 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  bb_n1 = runif(50, min = -1.75, max = 1.75)
+  bb_n2 = rnorm(50, mean=0, sd=1)
+  ks_test_8 = ks.test(bb_n1, bb_n2)
+  ks_test_results_8 = ks_test_8$p.value > 0.050
+  num_rejected_notrejected_8[i] = ks_test_results_8
+}
+beta_8 = length(which(num_rejected_notrejected_8=='TRUE'))/1000
+power_8 = 1 - (beta_8)
+num_rejected_notrejected_9 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  cc_n1 = runif(200, min = -1.75, max = 1.75)
+  cc_n2 = rnorm(200, mean=0, sd=1)
+  ks_test_9 = ks.test(cc_n1, cc_n2)
+  ks_test_results_9 = ks_test_9$p.value > 0.050
+  num_rejected_notrejected_9[i] = ks_test_results_9
+}
+beta_9 = length(which(num_rejected_notrejected_9=='TRUE'))/1000
+power_9 = 1 - (beta_9)
+num_rejected_notrejected_10 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  dd_n1 = runif(500, min = -1.75, max = 1.75)
+  dd_n2 = rnorm(500, mean=0, sd=1)
+  ks_test_10 = ks.test(dd_n1, dd_n2)
+  ks_test_results_10 = ks_test_10$p.value > 0.050
+  num_rejected_notrejected_10[i] = ks_test_results_10
+}
+beta_10 = length(which(num_rejected_notrejected_10=='TRUE'))/1000
+power_10 = 1 - (beta_10)
+```
+
+
+4.
+
+| n1|n2|1-Bad|
+|--:|:-|:---:|
+|20|20|1-0.809 = 0.191|
+|50|50|1 - 0.746 = 0.254|
+|200|200|1 - 0.315 = 0.685|
+|500|500|1 - 0.001 = 0.999|
+
+```{r}
+library(twosamples)
+num_rejected_notrejected_11 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  a2_n1 = runif(20, min = -1.75, max = 1.75)
+  a2_n2 = rnorm(20, mean=0, sd=1)
+  ad_test_11 = as.numeric(ad_test(a2_n1, a2_n2))
+  ad_test_results_11 = ad_test_11[2] > 0.050
+  num_rejected_notrejected_11[i] = ad_test_results_11
+}
+beta_11 = length(which(num_rejected_notrejected_11=='TRUE'))/1000
+power_11 = 1 - (beta_11)
+
+num_rejected_notrejected_12 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  b2_n1 = runif(50, min = -1.75, max = 1.75)
+  b2_n2 = rnorm(50, mean=0, sd=1)
+  ad_test_12 = as.numeric(ad_test(b2_n1, b2_n2))
+  ad_test_results_12 = ad_test_12[2] > 0.050
+  num_rejected_notrejected_12[i] = ad_test_results_12
+}
+beta_12 = length(which(num_rejected_notrejected_12=='TRUE'))/1000
+power_12 = 1 - (beta_12)
+
+num_rejected_notrejected_13 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  c2_n1 = runif(200, min = -1.75, max = 1.75)
+  c2_n2 = rnorm(200, mean=0, sd=1)
+  ad_test_13 = as.numeric(ad_test(c2_n1, c2_n2))
+  ad_test_results_13 = ad_test_13[2] > 0.050
+  num_rejected_notrejected_13[i] = ad_test_results_13
+}
+beta_13 = length(which(num_rejected_notrejected_13=='TRUE'))/1000
+power_13 = 1 - (beta_13)
+
+num_rejected_notrejected_14 <- vector("logical", 1000L)
+for (i in 1:1000) {
+  d2_n1 = runif(500, min = -1.75, max = 1.75)
+  d2_n2 = rnorm(500, mean=0, sd=1)
+  ad_test_14 = as.numeric(ad_test(d2_n1, d2_n2))
+  ad_test_results_14 = ad_test_14[2] > 0.050
+  num_rejected_notrejected_14[i] = ad_test_results_14
+}
+beta_14 = length(which(num_rejected_notrejected_14=='TRUE'))/1000
+power_14 = 1 - (beta_14)
+```
+
+5.
+**Based on my results, I would recommend the Anderson-Darling test instead of the KS test because the statistical power of our Anderson-Darling test proved to be greater for all 4 sample sizes, showing it better correctly rejects an incorrect null hypothesis.**
+
