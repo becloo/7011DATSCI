@@ -5,7 +5,8 @@ date: "22/11/2021"
 output: pdf_document
 ---
 
-1. **My simulation on randomly generated data from a normal distribution with n=1000 showed 52/1000 significant p-values. Therefore, it rejected the null hypothesis of normality 5.2% of the time (~5%).**
+1. **My simulation on randomly generated data from a normal distribution with n=1000 showed 52/1000 significant p-values.** 
+**Therefore, it rejected the null hypothesis of normality 5.2% of the time (~5%).**
 
 ```{r}
 num_rejected <- vector("logical", 1000L)

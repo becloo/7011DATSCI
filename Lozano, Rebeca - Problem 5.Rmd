@@ -1,0 +1,136 @@
+---
+title: "Problem 5"
+author: "Rebeca Lozano"
+date: "22/11/2021"
+output: pdf_document
+---
+1. Measure the sample mean, the sample median, the sample standard deviation, the sample first quartile, the sample geometric mean, the sample harmonic mean, and the sample median absolute deviation.
+
+|        |       |
+|-------:|:-----:|
+|sample_mean|169.471|
+|sample_median|186.0|
+|sample_sd|46.871|
+|sample_firstquartile|164.0|
+|sample_geomean|160.650|
+|sample_harmonicmean|147.922|
+|sample_mad|29.652|
+
+```{r}
+library(psych)
+data = c(207,202,169,211,191,212,108,92,186,203,126,184,206,177,164,53,190)
+sample_mean = mean(data)
+sample_median = median(data)
+sample_sd = sd(data)
+sample_first_quant = quantile(data, 0.25)
+sample_geo_mean = exp(mean(log(data)))
+sample_harm_mean = harmonic.mean(data)
+sample_mad = mad(data)
+```
+
+2. Produce a histogram of the data and a normal quantile-quantile plot (with line) using the data and plot them side-by-side.
+
+```{r}
+par(mfrow=c(1,2))
+hist(data, col='orange')
+qqnorm(data, pch=20)
+qqline(data, col='blue', lwd=3)
+par(mfrow=c(1,1))
+
+```
+
+3. Use an appropriate statistical test to assess if the data are sampled from a normal distribution (be sure to include a p-value). If the data are not normal, use one sentence to describe in what manner the distribution deviates from normal.
+
+**Based on our Shapiro test, we gathered that our p-value=0.003903 (p < 0.05), which allows us to reject the null hypothesis that our data is normal. This verifies our histogram and normal QQ plot from Q2, where our histogram shows that the data is skewed to the left, and our normal QQ plot shows several points far from our reference line.**
+
+```{r}
+shapiro.test(data)
+```
+4. Calculate 95% confidence intervals on the population mean, population median,population standard deviation, population first quartile, population geometric mean, population harmonic mean, and population median absolute deviation using a Studentized bootstrap in R. (For partial credit, use a percentile bootstrap or basic bootstrap.) Summarize your results together in a table.
+
+|CI on |normal|basic|percentile|
+|-----:|:-----|-----|:--------:|
+|pop_mean|(148.0, 190.9)|(149.9, 192.9)|(146.1, 189.0)|
+|pop_median|(165.8, 207.4)|(169.0, 208.0)|(164.0, 203.0)|
+|pop_sd|(30.9, 67.5)|(33.1, 69.5)|(24.3, 60.6)|
+|pop_firstquantile|(120.9, 233.2)|(142.0, 236.0)|(92.0, 186.0)|
+|pop_geomean|(132.9, 187.2)|(134.8, 188.7)|(132.6, 186.6)|
+|pop_harmonicmean|(110.8, 180.8)|(111.8, 179.9)|(115.9, 184.1)|
+|pop_mad|(5.8, 55.4)|(-2.97, 48.9)|(10.4, 62.3)|
+
+
+```{r}
+
+library(boot)
+
+pop_mean_func <- function(v, index){
+  resampled_data <- data[index]
+  mean <- mean(resampled_data)
+  mean
+}
+set.seed(10)
+pop_mean_boot_results <- boot(data = data, statistic = pop_mean_func, R = 10000)
+t<-pop_mean_boot_results$t
+
+pop_mean_ci <- boot.ci(pop_mean_boot_results)
+
+
+pop_median_func <- function(v, index){
+  resampled_data <- data[index]
+  median <- median(resampled_data)
+  median
+}
+set.seed(10)
+pop_median_boot_results <- boot(data = data, statistic = pop_median_func, R = 10000)
+pop_median_ci <- boot.ci(pop_median_boot_results)
+
+
+pop_sd_func <- function(v, index){
+  resampled_data <- data[index]
+  sd <- sd(resampled_data)
+  sd
+}
+set.seed(10)
+pop_sd_boot_results <- boot(data = data, statistic = pop_sd_func, R = 10000)
+pop_sd_ci <- boot.ci(pop_sd_boot_results)
+
+
+pop_first_quant <- function(v, index){
+  resampled_data <- data[index]
+  first_quant <- quantile(resampled_data, 0.25)
+  first_quant
+}
+set.seed(10)
+pop_firstquant_boot_results <- boot(data = data, statistic = pop_first_quant, R = 10000)
+pop_firstquant_ci <- boot.ci(pop_firstquant_boot_results)
+
+
+pop_geo_func <- function(v, index){
+  resampled_data <- data[index]
+  geomean <- geometric.mean(resampled_data)
+  geomean
+}
+set.seed(10)
+pop_geo_boot_results <- boot(data = data, statistic = pop_geo_func, R = 10000)
+pop_geomean_ci <- boot.ci(pop_geo_boot_results)
+
+
+pop_harm_func <- function(v, index){
+  resampled_data <- data[index]
+  harm <- harmonic.mean(resampled_data)
+  harm
+}
+set.seed(10)
+pop_harm_boot_results <- boot(data = data, statistic = pop_harm_func, R = 10000)
+pop_harmmean_ci <- boot.ci(pop_harm_boot_results)
+
+
+pop_mad_func <- function(v, index){
+  resampled_data <- data[index]
+  mad <- mad(resampled_data)
+  mad
+}
+set.seed(10)
+pop_mad_boot_results <- boot(data = data, statistic = pop_mad_func, R = 10000)
+pop_mad_ci <- boot.ci(pop_mad_boot_results)
+```

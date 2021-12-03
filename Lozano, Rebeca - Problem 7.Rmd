@@ -1,0 +1,156 @@
+---
+title: "Problem 7"
+author: "Rebeca Lozano"
+date: "22/11/2021"
+output: pdf_document
+---
+
+1.
+```{r}
+stars <- read.csv("stars.csv")
+stars$log_luminosity = log(stars$luminosity)
+par(mfrow = c(2,2))
+plot(stars$distance)
+plot(stars$colorindex)
+plot(stars$luminosity)
+plot(stars$log_luminosity)
+par(mfrow = c(1,1))
+
+```
+
+
+2. 
+
+**a) Distance and luminosity: Spearman correlation coefficient p-value = 0.7612**
+  
+  **Distance and log_luminosity: Spearman correlation coefficient p-value = 0.7612**
+    
+**b) Distance and colour index: Spearman correlation coefficient p-value = 0.4728**
+
+**c) Colour index and luminosity: Spearman correlation coefficient p-value = 8.022e-11**
+    
+  **Colour index and log_luminosity: Spearman correlation coefficient p-value = 8.022e-11**
+
+```{r}
+
+#a
+cor.test(stars$distance, stars$luminosity, method='spearman')
+
+cor.test(stars$distance, stars$log_luminosity, method='spearman')
+
+#b
+cor.test(stars$distance, stars$colorindex, method='spearman')
+
+#c
+cor.test(stars$colorindex, stars$luminosity, method='spearman')
+
+cor.test(stars$colorindex, stars$log_luminosity, method='spearman')
+
+```
+
+
+3.
+```{r}
+cols = c('blue','green')
+a = as.factor(stars$evoltype)
+plot(stars$log_luminosity, stars$colorindex, pch=21, bg = cols[a])
+
+```
+
+
+4. 
+
+```{r}
+stars_wd = stars[stars$evoltype=='WD',]
+model_1 = lm(log_luminosity ~ colorindex, data = stars_wd)
+summary(model_1)
+
+```
+
+5.
+**The colorindex variable is significant, shown by our colourindex p-value of <2e-16. Therefore, it indicates a statistically significant linear relationship.**
+```{r}
+
+stars_ms = stars[stars$evoltype=='MS',]
+model_2 = lm(log_luminosity ~ colorindex, data = stars_ms)
+summary(model_2)
+
+```
+
+6. 
+a. $log(luminosity) = 5.1511 - 7.3522(colorindex)$
+b. $luminosity = exp(5.1511 - 7.3522(colorindex))$
+
+
+7.
+
+**a) Our residuals vs. fitted plot shows that we do not have a good residual trend, many of our fitted values deviate from an error of 0. **
+
+**b) Our normal QQ plot shows that our residuals are deviated from normal, as they do not properly follow the line. **
+
+**c) Our red line in our scale-location plot tells us that the average magnitude of the standardized residuals is changing quite plenty as a function of the fitted values, and the spread from the red line tells us that the variability of magnitudes varies strongly as a function of the fitted values.**
+
+**d) Our residuals vs. leverage plot identifies one influential point/outlier (#8) in our model that, if removed, could change the model significantly.**
+
+
+**No, the assumptions of linear regression are not satisfied under this model.**
+
+```{r}
+par(mfrow=c(2,2))
+plot(model_2)
+par(mfrow=c(1,1))
+```
+
+8.
+**From our data and model, we gather that SSY = -1786.593, SSM = 750.0742, and SSE = 44.82883.**
+
+```{r}
+#a
+SSY = sum((stars_ms$log_luminosity - mean(stars_ms$log_luminosity))^2)
+SSY
+#b
+SSM = sum((predict(model_2) - mean(stars_ms$log_luminosity))^2)
+SSM
+#c
+SSE = sum((predict(model_2)-stars_ms$log_luminosity)^2)
+SSE
+```
+
+9.
+**From our data and model, we gather that SSM_3 = 771.5145, and SSE_3 = 23.38856.**
+```{r}
+model_3 = lm(log_luminosity~colorindex*magnitude, data=stars_ms)
+#summary(model_3)
+
+plot(stars_ms$colorindex, stars_ms$log_luminosity)
+a <- order(stars_ms$colorindex)
+lines(stars_ms$colorindex[a],model_3$fitted[a],col='red',lwd=3)
+
+#par(mfrow = c(2,2))
+#plot(model_3)
+#par(mfrow = c(1,1))
+
+SSM_3 = sum((predict(model_3)-mean(stars_ms$log_luminosity))^2)
+SSM_3
+SSE_3 = sum((predict(model_3)-stars_ms$log_luminosity)^2)
+SSE_3
+```
+
+10.
+**From our data and model, we gather that SSM_4 = 767.6827, and SSE_4 = 29.03754.**
+```{r}
+
+model_4 = loess(stars_ms$log_luminosity~stars_ms$colorindex,data=stars_ms, span=0.9)
+plot(stars_ms$colorindex, stars_ms$log_luminosity)
+b <- order(stars_ms$colorindex)
+lines(stars_ms$colorindex[b],model_4$fitted[b],col='green',lwd=3)
+
+SSM_4 = sum((predict(model_4) - mean(stars_ms$log_luminosity))^2)
+SSM_4
+
+SSE_4 = sum((predict(model_4) - stars_ms$log_luminosity)^2)
+SSE_4
+
+```
+
+
